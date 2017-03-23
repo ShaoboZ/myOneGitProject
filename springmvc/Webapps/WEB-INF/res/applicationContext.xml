@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+		xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx" 
+		xmlns:jpa="http://www.springframework.org/schema/data/jpa" xmlns:mvc="http://www.springframework.org/schema/mvc" 
+		xmlns:task="http://www.springframework.org/schema/task" xmlns:aop="http://www.springframework.org/schema/aop"
+		xsi:schemaLocation="
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+			http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.0.xsd
+			http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+			http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.2.xsd
+			http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+			http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.0.xsd
+			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd"
+		default-lazy-init="true">
+		<!-- 自动扫面注解包 -->
+		<context:annotation-config />
+		<context:component-scan base-package="cn.com.bo.*" />
+		<context:property-placeholder location="/WEB-INF/res/hibernate.properties" />
+		
+		<!-- C3P0 数据源配置  -->
+		  <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		    <!-- 驱动 -->
+		    <property name="driverClass" value="${c3p0.driver_class}" />
+		    <!-- 数据库连接url -->
+		    <property name="jdbcUrl" value="${c3p0.url}" />
+		    <!-- 用户名 -->
+		    <property name="user" value="${c3p0.username}"/>
+		    <!-- 密码 -->
+		    <property name="password" value="${c3p0.password}"/>
+		    <!-- 设置数据库连接池的最大连接数 -->  
+		        <property name="maxPoolSize" value="${c3p0.maxPoolSize}"/>  
+		        <!-- 设置数据库连接池的最小连接数 -->  
+		        <property name="minPoolSize" value="${c3p0.minPoolSize}"/>  
+		        <!-- 设置数据库连接池的初始化连接数 -->  
+		        <property name="initialPoolSize" value="${c3p0.initialPoolSize}"/>  
+		        <!-- 设置数据库连接池的连接的最大空闲时间,单位为秒 -->  
+		        <property name="maxIdleTime" value="${c3p0.maxIdleTime}"/>  
+		  </bean>
+	
+		<!-- SessionFactory配置 -->
+		  <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		    <!-- 配置dataSource属性 -->
+		    <property name="dataSource" ref="dataSource" />
+		    <!-- 扫描的包 -->
+		    <property name="packagesToScan" value="cn.com.bo.entity"/>
+		    
+		    <!-- 配置hibernate属性 -->
+		    <property name="hibernateProperties">
+		      <props>
+		        <prop key="hibernate.dialect">
+		          ${hibernate.dialect}
+		        </prop>
+		        <prop key="hibernate.show_sql">
+		          ${hibernate.show_sql}
+		        </prop>
+		        <prop key="hibernate.format_sql">
+		          ${hibernate.format_sql}
+		        </prop>
+		        <prop key="hibernate.hbm2ddl.auto">
+		          ${hibernate.hbm2ddl.auto}
+		        </prop>
+		        <prop key="hibernate.useUnicode">
+		          ${hibernate.useUnicode}
+		        </prop>
+		        <prop key="hibernate.characterEncoding">
+		          ${hibernate.characterEncoding}
+		        </prop>
+		
+		      </props>
+		    </property>
+		  </bean>
+	
+		<!-- 配置事务管理 -->
+		<bean id="transactionManager"
+			class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+			<property name="sessionFactory" ref="sessionFactory" />
+		</bean>
+	
+		<!-- 开启事务管理注解 -->
+		<tx:annotation-driven transaction-manager="transactionManager"
+			proxy-target-class="true" />
+		<!-- 配置事务通知属性 -->
+	    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+	        <!-- 定义事务传播属性 -->
+	        <tx:attributes>
+	            <tx:method name="insert*" propagation="REQUIRED" rollback-for="Exception"/>
+	            <tx:method name="update*" propagation="REQUIRED" rollback-for="Exception"/>
+	            <tx:method name="edit*" propagation="REQUIRED" rollback-for="Exception"/>
+	            <tx:method name="save*" propagation="REQUIRED" rollback-for="Exception"/>
+	            <tx:method name="add*" propagation="REQUIRED" rollback-for="Exception"/>
+	            <tx:method name="new*" propagation="REQUIRED" rollback-for="Exception"/>
+	            <tx:method name="set*" propagation="REQUIRED" rollback-for="Exception"/>
+	            <tx:method name="remove*" propagation="REQUIRED" rollback-for="Exception"/>
+	            <tx:method name="delete*" propagation="REQUIRED" rollback-for="Exception"/>
+	            <tx:method name="change*" propagation="REQUIRED" rollback-for="Exception"/>
+	            <tx:method name="get*" propagation="REQUIRED" read-only="true" />
+	            <tx:method name="find*" propagation="REQUIRED" read-only="true" />
+	            <tx:method name="load*" propagation="REQUIRED" read-only="true" />
+	            <tx:method name="*" propagation="REQUIRED" read-only="true" />
+	        </tx:attributes>
+	    </tx:advice>
+	
+		<!-- 配置事务切面 -->
+	    <aop:config>
+	        <aop:pointcut id="serviceOperation"
+	            expression="execution(* cn.com.bo.service..*.*(..))" />
+	        <aop:advisor advice-ref="txAdvice" pointcut-ref="serviceOperation" />
+	    </aop:config>  
+	</beans>

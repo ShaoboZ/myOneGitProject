@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://util.bo.com.cn" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="http://util.bo.com.cn" xmlns:intf="http://util.bo.com.cn" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--WSDL created by Apache Axis version: 1.4
+Built on Apr 22, 2006 (06:55:48 PDT)-->
+ <wsdl:types>
+  <schema elementFormDefault="qualified" targetNamespace="http://util.bo.com.cn" xmlns="http://www.w3.org/2001/XMLSchema">
+   <element name="sayService">
+    <complexType/>
+   </element>
+   <element name="sayServiceResponse">
+    <complexType/>
+   </element>
+  </schema>
+ </wsdl:types>
+
+   <wsdl:message name="sayServiceRequest">
+
+      <wsdl:part element="impl:sayService" name="parameters">
+
+      </wsdl:part>
+
+   </wsdl:message>
+
+   <wsdl:message name="sayServiceResponse">
+
+      <wsdl:part element="impl:sayServiceResponse" name="parameters">
+
+      </wsdl:part>
+
+   </wsdl:message>
+
+   <wsdl:portType name="WebServiceTest">
+
+      <wsdl:operation name="sayService">
+
+         <wsdl:input message="impl:sayServiceRequest" name="sayServiceRequest">
+
+       </wsdl:input>
+
+         <wsdl:output message="impl:sayServiceResponse" name="sayServiceResponse">
+
+       </wsdl:output>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="WebServiceTestSoapBinding" type="impl:WebServiceTest">
+
+      <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="sayService">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="sayServiceRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="sayServiceResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="WebServiceTestService">
+
+      <wsdl:port binding="impl:WebServiceTestSoapBinding" name="WebServiceTest">
+
+         <wsdlsoap:address location="http://localhost/springmvc/services/WebServiceTest"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>
